@@ -17,45 +17,90 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel by viewModels<MainViewModel>()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             MyTheme {
-                MyApp()
+
+                ProvideWindowInsets {
+                    MainScreen(viewModel.dailyForecasts)
+                }
             }
         }
     }
 }
 
-// Start building your app here!
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
-    }
-}
+fun MainScreen(forecasts: List<DailyForecast>) {
+    // We use surface for setting up the contentColor
+    Surface(contentColor = MaterialTheme.colors.onPrimary) {
+        Column(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colors.primary,
+                            MaterialTheme.colors.primaryVariant
+                        )
+                    )
+                )
+                .statusBarsPadding()
+                .verticalScroll(rememberScrollState()) // useful on landscape orientation
+        ) {
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
+            TextOnlyToolbar(text = "Jakarta, Indonesia")
 
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+            BasicWeatherInfo(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp)
+            )
+
+            HumidityAndWindSimple(
+                Modifier
+                    .padding(vertical = 16.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+            )
+
+            SunriseAndSunset(
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            DailyForecast(modifier = Modifier.padding(16.dp), list = forecasts)
+        }
     }
 }
