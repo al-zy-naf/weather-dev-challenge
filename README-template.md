@@ -6,8 +6,8 @@
 
 
 ## :scroll: Description
-Single screen weather app that i made for jetpack compose
-
+Single screen weather app that i made for jetpack compose.
+All weather icons on this app mostly obtained from https://flaticon.com/
 
 ## :bulb: Motivation and Context
 <!--- Optionally point readers to interesting parts of your submission. -->
